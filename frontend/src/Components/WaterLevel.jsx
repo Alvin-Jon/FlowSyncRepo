@@ -1,4 +1,4 @@
-import WaterTank from "../components/WaterTank";
+import WaterTank from "./WaterTank";
 
 const WaterLevel = ({ level }) => {
   return (
