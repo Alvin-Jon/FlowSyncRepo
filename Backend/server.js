@@ -18,6 +18,7 @@ const esp32Routes = require('./Routes/Esp32Routes');
 
 
 // Middleware
+app.set('trust proxy', true);
 app.use(corsMiddleware);
 console.log("Mongo URI:", process.env.MONGO_URI);
 app.use(express.json());
@@ -43,7 +44,6 @@ app.use(
   })
 );
 
-app.set('trust proxy', true);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/auth', authRoutes);

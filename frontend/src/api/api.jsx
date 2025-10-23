@@ -6,6 +6,6 @@ export default axios.create({
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-   'Access-Control-Allow-Origin': 'http://localhost:5173/', // remove in deployment
+   //'Access-Control-Allow-Origin': 'http://localhost:5173/', // remove in deployment
   },
 });
