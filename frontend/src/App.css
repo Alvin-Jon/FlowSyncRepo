@@ -73,7 +73,7 @@
 }
 
 
-@media (max-width: 420px) {
+@media (max-width: 380px) {
   .login-form {
     width: 350px;
   }
