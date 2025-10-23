@@ -71,3 +71,10 @@
   }
 
 }
+
+
+@media (max-width: 420px) {
+  .login-form {
+    width: 350px;
+  }
+}
