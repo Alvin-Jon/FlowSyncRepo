@@ -20,6 +20,11 @@
     margin-bottom: 40px;
   }
 
+  body {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   
 
   .app-layout {
