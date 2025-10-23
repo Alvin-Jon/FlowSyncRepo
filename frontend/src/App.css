@@ -1,0 +1,73 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* 📱 MOBILE VIEW */
+@media (max-width: 768px) {
+   html, body, #root, main, .app-layout {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+   #root {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 40px;
+  }
+
+  
+
+  .app-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto; /* content + nav at bottom */
+    padding: 0px;
+    
+  }
+
+  .app-layout nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    border-right: none;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+  }
+
+  .content {
+    margin-bottom: 60px; /* prevent content from hiding behind nav */
+    box-sizing: border-box;
+    width: 100vw; 
+    padding: 10px;
+    padding-bottom: 60px;
+    margin-left: calc(-1 * (100vw - 100%)/2); 
+  }
+
+  .nav-link {
+    flex-direction: column;
+    font-size: 0.8rem;
+    padding: 0.4rem;
+    gap: 4px;
+  }
+
+  .nav-link.active {
+    background-color: transparent;
+    color: var(--accent-color) !important;
+  }
+
+  nav img {
+    display: none;
+  }
+
+}
