@@ -21,7 +21,7 @@ export const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"], // Uncomment if needed
+  //allowedHeaders: ["Content-Type", "Authorization"], // comment in deployment
 };
 
 export default cors(corsOptions);
