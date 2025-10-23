@@ -6,6 +6,9 @@ const allowedOrigins = [
   "http://192.168.0.105",      
 ];
 
+console.log("✅ FRONTEND_ORIGIN:", process.env.FRONTEND_ORIGIN);
+
+
 export const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
