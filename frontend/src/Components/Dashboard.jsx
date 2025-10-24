@@ -5,32 +5,38 @@ import WaterSupply from "./WaterSupply";
 import SensorStatus from "./SensorStatus";
 import WaterUsage from "./WaterUsage";
 import { useAuth } from "./AuthProvider";
+import useEffect from "react";
 
 const Dashboard = ({sendNotification}) => {
-    const { deviceDetails, setDeviceDetails } = useAuth();
+    const { deviceDetails, setDeviceDetails, checkAuth } = useAuth();
+
+  if (!deviceDetails?.Details?.device) {
+    return <div className="loading">Loading Dashboard...</div>;
+  }
 
     return (
         <>
             {header("Water Monitoring", "Real-time system status")}
-            <WaterLevel level={deviceDetails.Details.device.status.waterLevel}/>
+            <WaterLevel level={deviceDetails?.Details?.device?.status?.waterLevel} />
 
-            <Water_Pump 
-            sendNotification = {sendNotification} 
-            setDeviceDetails = {setDeviceDetails} 
-            deviceDetails = {deviceDetails}
-            pumpState = {deviceDetails?.Details?.device?.status?.waterpumpStatus} 
-            autoState = {deviceDetails?.Details?.device?.status?.autoPump}
+           <Water_Pump 
+                sendNotification={sendNotification} 
+                setDeviceDetails={setDeviceDetails} 
+                deviceDetails={deviceDetails}
+                pumpState={deviceDetails?.Details?.device?.status?.waterpumpStatus} 
+                autoState={deviceDetails?.Details?.device?.status?.autoPump}
             />
 
             <WaterSupply 
-            sendNotification = {sendNotification} 
-            setDeviceDetails = {setDeviceDetails} 
-            deviceDetails = {deviceDetails}
-            supplyState = {deviceDetails?.Details?.device?.status?.watersupplyStatus}
+                sendNotification={sendNotification} 
+                setDeviceDetails={setDeviceDetails} 
+                deviceDetails={deviceDetails}
+                supplyState={deviceDetails?.Details?.device?.status?.watersupplyStatus}
             />
 
-            <SensorStatus sensorData = {deviceDetails?.Details?.device?.SensorData} />
-            <WaterUsage history = {deviceDetails?.Details?.device?.status?.history?.logs}/>
+            <SensorStatus sensorData={deviceDetails?.Details?.device?.SensorData} />
+            <WaterUsage history={deviceDetails?.Details?.device?.status?.history?.logs} />
+
         </>
     )
 }

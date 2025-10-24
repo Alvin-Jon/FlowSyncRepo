@@ -5,6 +5,7 @@ import api from '../api/api';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
+import {ThreeDots} from 'react-loading-icons'
 
 
 
@@ -14,7 +15,7 @@ const Login = ({sendNotification}) => {
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
-    const {setDeviceDetails, setIsAuthenticated} = useAuth();
+    const {setDeviceDetails, setIsAuthenticated, checkAuth} = useAuth();
     
 
     const navigate = useNavigate()
@@ -30,7 +31,8 @@ const Login = ({sendNotification}) => {
         setLoading(true)
         const response = await api.post('auth/login', {email, password});
         setIsAuthenticated(true);
-        setDeviceDetails(response.data.user)
+        setDeviceDetails(response.data.user);
+        checkAuth().catch(console.error);
         sendNotification('Welcome', `Thank you ${response.data.user.Username} for choosing flowsync`, 'info');
         navigate('/');
       }catch (e){
@@ -73,8 +75,9 @@ const Login = ({sendNotification}) => {
         </div>
         <p className='forgot'><a href='login/forgot-password'>Forgot Password? </a></p>
         <button type="submit" >
-          {loading ? <RotatingLines strokeColor=" #fff " width="35px"/>  : 'Login'}
+          {loading ? <ThreeDots strokeColor="#fff" width="35px"/>  : 'Login'}
         </button>
+
         <p className='register'>Don't have an account? <a href='register'>Register</a></p>
       </form>
     );

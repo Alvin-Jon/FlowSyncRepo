@@ -18,7 +18,7 @@ function AppContent({ showNotification, setShowNotification, notification, sendN
   const hideLayout =
     location.pathname.includes('login') ||
     location.pathname.includes('register') ||
-    location.pathname.includes('device/setup'); // optional extra route to hide nav
+    location.pathname.includes('device/setup');
 
   return (
     <>

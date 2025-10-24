@@ -15,6 +15,7 @@ const Register = ({setOtpEmail}) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   
 
@@ -37,7 +38,7 @@ const Register = ({setOtpEmail}) => {
         password,
         deviceId
       };
-
+      setLoading(true);
       const response = await api.post('auth/register', user);
 
       // Handle successful response
@@ -51,6 +52,8 @@ const Register = ({setOtpEmail}) => {
     } catch (err) {
       // Handle errors
       setErrorMessage(err.response.data.message)
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -144,8 +147,8 @@ const Register = ({setOtpEmail}) => {
         I agree to the terms & conditions
       </label>
 
-      <button type="submit">
-        Register
+       <button type="submit" >
+                {loading ? <ThreeDots strokeColor="#fff" width="35px"/>  : 'Register'}
       </button>
       <p className="register">
         Already have an account? <a href="login">Login</a>
