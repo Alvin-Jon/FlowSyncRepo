@@ -5,6 +5,7 @@ import { Cpu } from 'lucide-react';
 import { useState } from 'react';
 import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
+import {ThreeDots} from 'react-loading-icons'
 
 const Register = ({setOtpEmail}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
