@@ -22,7 +22,6 @@ router.post('/data', async (req, res) => {
 // ⚡ Update device status
 router.post('/status-update', async (req, res) => {
   const { deviceId, status } = req.body;
-  console.log('Status update received:', { deviceId, status });
   
   if (!deviceId || !status) {
     console.log('Missing deviceId or status');
