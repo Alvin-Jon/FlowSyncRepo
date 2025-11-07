@@ -1,6 +1,7 @@
 import WaterTank from "./WaterTank";
 
-const WaterLevel = ({ level }) => {
+const WaterLevel = ({/*level*/}) => {
+  const level = 75;
   return (
     <div className="water-level card">
       <p style={{fontSize: "1.2rem", fontWeight:"bold", marginBottom: "20px"}}>Water Tank Level</p>
