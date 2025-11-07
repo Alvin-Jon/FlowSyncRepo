@@ -1,7 +1,15 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const WaterUsage = ({history}) => {
-  const data = history;
+  const data = [
+    { day: "Mon", usage: 70 },
+    { day: "Tue", usage: 90 },
+    { day: "wed", usage: 50 },
+    { day: "Thur", usage: 90 },
+    { day: "fri", usage: 80 },
+    { day: "sat", usage: 120 },
+    { day: "sun", usage: 70 },
+  ];
     return (
     <div className="card" style={{ width: "100%", height: "350px", marginTop: "40px", padding: "20px", paddingBottom: "50px" }}>
       <h3 style={{ textAlign: "left", marginBottom: "1rem" }}>Average Daily Water Usage (L)</h3>
