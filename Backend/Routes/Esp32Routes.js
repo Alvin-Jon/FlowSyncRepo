@@ -33,9 +33,7 @@ router.post('/status-update', async (req, res) => {
     const io = getIO();
     const deviceSocketMap = getDeviceMap();
     const socketId = deviceSocketMap.get(deviceId);
-
     const updatedStatus = await esp32StatusUpdate(deviceId, status);
-    console.log('Status updated successfully:', updatedStatus);
 
     if (socketId) {
       io.to(socketId).emit("update-device-details", updatedStatus);
