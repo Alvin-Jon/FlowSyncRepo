@@ -27,6 +27,17 @@ const AuthProvider = ({ children }) => {
         }
     };
 
+    const Update = async () => {
+        try {
+            const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
+            setDeviceDetails(response.data);
+            console.log("Updated AuthProvider:",response.data)
+        }
+        catch (error) {
+            console.error("Error updating AuthProvider:", error);
+        }
+    };
+
 
     useEffect(() => {
         checkAuth();
@@ -39,7 +50,7 @@ const AuthProvider = ({ children }) => {
             socket.emit("register-device", deviceDetails?.Details?.device?.nameId);
 
             const handleUpdate = () => {
-            if (!loading) checkAuth();
+            if (!loading) Update();
             };
 
             socket.on("update-device-details", handleUpdate);
