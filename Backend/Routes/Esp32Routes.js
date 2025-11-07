@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getDeviceState, esp32StatusUpdate, esp32SensorDataUpdate } = require('../Services/State');
+const { getDeviceState } = require('../Services/State');
+const {esp32StatusUpdate, esp32SensorDataUpdate} = require('../Services/Updates');
 const { getIO, getDeviceMap } = require('../Config/Socket');
 
 // 🧩 Get device data
@@ -21,8 +22,12 @@ router.post('/data', async (req, res) => {
 // ⚡ Update device status
 router.post('/status-update', async (req, res) => {
   const { deviceId, status } = req.body;
-  if (!deviceId || !status)
+  console.log('Status update received:', { deviceId, status });
+  
+  if (!deviceId || !status) {
+    console.log('Missing deviceId or status');
     return res.status(400).json({ message: 'Device ID and status are required' });
+  }
 
   try {
     const io = getIO();
@@ -30,6 +35,7 @@ router.post('/status-update', async (req, res) => {
     const socketId = deviceSocketMap.get(deviceId);
 
     const updatedStatus = await esp32StatusUpdate(deviceId, status);
+    console.log('Status updated successfully:', updatedStatus);
 
     if (socketId) {
       io.to(socketId).emit("update-device-details", updatedStatus);
@@ -41,7 +47,10 @@ router.post('/status-update', async (req, res) => {
     res.json({ message: 'Status updated successfully', status: updatedStatus });
   } catch (error) {
     console.error('Error updating status:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: error.message 
+    });
   }
 });
 
