@@ -8,6 +8,7 @@ let deviceSocketMap = new Map(); // deviceId -> socket.id
 
 function initSocket(server) {
   io = new Server(server, {
+    path: "/socket.io",
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
