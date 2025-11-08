@@ -33,6 +33,7 @@ router.post('/status-update', async (req, res) => {
     const deviceSocketMap = getDeviceMap();
     const socketId = deviceSocketMap.get(deviceId);
     const updatedStatus = await esp32StatusUpdate(deviceId, status);
+    const deviceStatus = await getDeviceState(deviceId);
 
     if (socketId) {
       io.to(socketId).emit("update-device-details", updatedStatus);
@@ -41,12 +42,12 @@ router.post('/status-update', async (req, res) => {
       console.warn(`⚠️ Device ${deviceId} not connected`);
     }
 
-    res.json({ message: 'Status updated successfully', status: updatedStatus });
+    res.json({ message: 'Status updated successfully', status: deviceStatus });
   } catch (error) {
     console.error('Error updating status:', error);
     res.status(500).json({ 
       message: 'Internal server error',
-      error: error.message 
+      error: error.message,
     });
   }
 });
