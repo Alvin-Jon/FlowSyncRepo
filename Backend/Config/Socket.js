@@ -9,9 +9,8 @@ let deviceSocketMap = new Map(); // deviceId -> socket.id
 function initSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: corsOptions.origin,
-      methods: corsOptions.methods,
-      credentials: corsOptions.credentials,
+      origin: "*",
+      methods: ["GET", "POST"],
     },
   });
 
