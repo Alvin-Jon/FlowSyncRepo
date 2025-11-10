@@ -51,7 +51,7 @@ app.use('/esp32', esp32Routes);
 
 // Connect to MongoDB
 connectToDatabase().then(() => {
- // require('./Controllers/Device');
+  require('./Controllers/Device');
 })
 
 
