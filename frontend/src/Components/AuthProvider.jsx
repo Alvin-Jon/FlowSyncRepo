@@ -54,9 +54,11 @@ const AuthProvider = ({ children }) => {
             };
 
             socket.on("update-device-details", handleUpdate);
+            socket.on("Esp32-offline", handleUpdate)
 
             return () => {
             socket.off("update-device-details", handleUpdate);
+            socket.off("Esp32-offline", handleUpdate)
             socket.disconnect();
             };
         }
