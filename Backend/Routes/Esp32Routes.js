@@ -13,6 +13,7 @@ router.post('/data', async (req, res) => {
   try {
     const deviceStatus = await getDeviceState(deviceId);
     res.json({ message: 'Device status fetched successfully', deviceStatus });
+    console.log(deviceStatus)
   } catch (error) {
     console.error('Error fetching device status:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -37,7 +38,7 @@ router.post('/status-update', async (req, res) => {
 
     if (socketId) {
       io.to(socketId).emit("update-device-details", updatedStatus);
-      console.log(`✅ Status sent to ${deviceId}`);
+      //console.log(`✅ Status sent to ${deviceId}`);
     } else {
       console.warn(`⚠️ Device ${deviceId} not connected`);
     }
