@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const Device = require('../Models/DeviceSchema');
+const { getIO, getDeviceMap } = require('../Config/Socket');
 
 // Run every 10 seconds
 cron.schedule('*/10 * * * * *', async () => {
@@ -21,6 +22,13 @@ cron.schedule('*/10 * * * * *', async () => {
           LeakSensor: [{ description: 'No Leaks', active: false }],
         };
         await device.save();
+
+        const io = getIO();
+        const deviceSocketMap = getDeviceMap();
+        const socketId = deviceSocketMap.get(device.nameId);
+
+       //inform the frontend 
+       io.to(socketId).emit("Esp32-offline");
       }
     }
   } catch (error) {
