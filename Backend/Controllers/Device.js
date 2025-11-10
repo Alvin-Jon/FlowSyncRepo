@@ -3,7 +3,7 @@ const Device = require('../Models/DeviceSchema');
 const { getIO, getDeviceMap } = require('../Config/Socket');
 
 // Run every 10 seconds
-cron.schedule('*/15 * * * * *', async () => {
+cron.schedule('*/20 * * * * *', async () => {
   const now = new Date();
 
   try {
