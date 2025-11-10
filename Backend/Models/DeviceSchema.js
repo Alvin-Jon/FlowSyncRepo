@@ -30,7 +30,7 @@ const SensorDataSchema = new Schema({
   },
   FlowSensor: {
     type: [{ description: { type: String, default: '24.5L/min' }, active: { type: Boolean, default: false } }],
-    default: () => [{ description: '24.5L/min' }],
+    default: () => [{ description: '0.0/min' }],
   },
   NetworkSensor: {
     type: [{ description: { type: String, default: 'Wifi not connected' }, active: { type: Boolean, default: false } }],

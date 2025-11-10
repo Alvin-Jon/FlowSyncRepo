@@ -1,9 +1,29 @@
-const User = require('../Models/UserSchema');
+const cron = require('node-cron');
 const Device = require('../Models/DeviceSchema');
-const { getIO, getDeviceMap } = require('../Config/Socket');
 
-const io = getIO();
-const deviceSocketMap = getDeviceMap();
+// Run every 10 seconds
+cron.schedule('*/10 * * * * *', async () => {
+  const now = new Date();
 
+  try {
+    // Fetch devices where the last update was > 10 seconds ago
+    const thresholdTime = new Date(now.getTime() - 10 * 1000);
+    const staleDevices = await Device.find({ updatedAt: { $lt: thresholdTime } });
 
+    if (staleDevices.length > 0) {
+      console.log(`🔄 Resetting ${staleDevices.length} stale device(s)`);
 
+      for (const device of staleDevices) {
+        device.SensorData = {
+          TankLevelSensor: [{ description: '24KHz Ultrasonic', active: false }],
+          FlowSensor: [{ description: '0.0/min', active: false }],
+          NetworkSensor: [{ description: 'Wifi not connected', active: false }],
+          LeakSensor: [{ description: 'No Leaks', active: false }],
+        };
+        await device.save();
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error resetting sensor data:', error);
+  }
+});
