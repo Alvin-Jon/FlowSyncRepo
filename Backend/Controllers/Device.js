@@ -3,12 +3,12 @@ const Device = require('../Models/DeviceSchema');
 const { getIO, getDeviceMap } = require('../Config/Socket');
 
 // Run every 10 seconds
-cron.schedule('*/20 * * * * *', async () => {
+cron.schedule('*/15 * * * * *', async () => {
   const now = new Date();
 
   try {
     // Fetch devices where the last update was > 10 seconds ago
-    const thresholdTime = new Date(now.getTime() - 10 * 1000);
+    const thresholdTime = new Date(now.getTime() - 15 * 1000);
     const staleDevices = await Device.find({ updatedAt: { $lt: thresholdTime } });
 
     if (staleDevices.length > 0) {
