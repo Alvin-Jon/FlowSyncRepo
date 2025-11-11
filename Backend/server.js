@@ -5,17 +5,34 @@ const app = express();
 const PORT = process.env.PORT || 3000;  
 const http = require('http');
 const server = http.createServer(app);
+
 const corsMiddleware = require('./Config/CorsConfig').default;
 const session = require('express-session');
-const passport = require('./Config/PassportConfig')
+const passport = require('./Config/PassportConfig');
 const connectToDatabase = require('./Config/Mongodb').default;
-const {initSocket} = require('./Config/Socket');
+const { initSocket } = require('./Config/Socket');
+const WebSocketService = require('./Config/WebSocketConfig');
+
+// Initialize Socket.IO
 initSocket(server);
+
+// Initialize native WebSocket server for ESP32
+const wsService = WebSocketService.getInstance();
+const wss = wsService.init(null, "/ws");
+
+// Handle upgrade requests manually for WebSocket (ESP32)
+server.on("upgrade", (req, socket, head) => {
+  if (req.url === "/ws") {
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit("connection", ws, req);
+    });
+  } else {
+    // do nothing; let Socket.IO or other handlers process this upgrade
+  }
+});
+
 const authRoutes = require('./Routes/AuthRoutes');
 const esp32Routes = require('./Routes/Esp32Routes');
-
-
-
 
 // Middleware
 app.set('trust proxy', true);
@@ -23,7 +40,7 @@ app.use(corsMiddleware);
 console.log("Mongo URI:", process.env.MONGO_URI);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-    
+
 // Session setup
 const MongoStore = require('connect-mongo');
 app.use(
@@ -35,12 +52,12 @@ app.use(
       mongoUrl: process.env.MONGO_URI,
       ttl: 14 * 24 * 60 * 60,
     }),
-   cookie: {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
-},
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    },
   })
 );
 
@@ -52,12 +69,9 @@ app.use('/esp32', esp32Routes);
 // Connect to MongoDB
 connectToDatabase().then(() => {
   require('./Controllers/Device');
-})
-
-
+});
 
 // Start server
 server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
