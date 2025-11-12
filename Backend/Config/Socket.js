@@ -2,6 +2,7 @@
 const { Server } = require("socket.io");
 const {corsOptions} = require('./CorsConfig');
 const {settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate} = require('../Services/Updates');
+const notifyESP32 = require('../Controllers/Esp32').notifyESP32;
 
 let io; // shared socket instance
 let deviceSocketMap = new Map(); // deviceId -> socket.id
@@ -51,6 +52,7 @@ function initSocket(server) {
       try {
         const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
         io.to(socket.id).emit("pump-status-updated", updatedStatus);
+        notifyESP32(deviceId, { pumpStatus, autoStatus });
         console.log(`🔄 Pump status updated for device: ${deviceId}`);
       }
         catch (error) {
@@ -62,6 +64,7 @@ function initSocket(server) {
       try {
         const updatedStatus = await watersupplyStatusUpdate(deviceId, supplyStatus);
         io.to(socket.id).emit("supply-status-updated", updatedStatus);
+        notifyESP32(deviceId, { supplyStatus });
         console.log(`🔄 Supply status updated for device: ${deviceId}`);
       }
         catch (error) {
