@@ -48,7 +48,7 @@ class WebSocketService {
         await device.save();
         const io = getIO();
         const deviceSocketMap = getDeviceMap();
-        const socketId = deviceSocketMap.get(device.nameId);
+        const socketId = deviceSocketMap.get(msg.nameId);
         
         //inform the frontend 
          io.to(socketId).emit("Esp32-offline");
