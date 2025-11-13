@@ -92,14 +92,33 @@ const esp32StatusUpdate = async (deviceId, newStatus) => {
     }
 };
 
-const esp32SensorDataUpdate = async (deviceId, sensorData) => {  
+const esp32SensorDataUpdate = async (deviceId, sensorData) => {
     try {
         const device = await Device.findOne({ nameId: deviceId });
-        if (!device) {
-            throw new Error('Device not found');
+        if (!device) throw new Error('Device not found');
+
+        // Handle leak sensor (special rule)
+        if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
+            if (sensorData.LeakSensor[0].description === "Leak Detected") {
+                device.status.leakage[0].detected = true;
+                device.status.leakage[0].location = "tank";
+            }
         }
-        // Update esp32 sensor data
-        device.SensorData = { ...device.SensorData, ...sensorData };
+
+        // Update each sensor safely
+        if (sensorData.TankLevelSensor) {
+            device.SensorData.TankLevelSensor = sensorData.TankLevelSensor;
+        }
+        if (sensorData.FlowSensor) {
+            device.SensorData.FlowSensor = sensorData.FlowSensor;
+        }
+        if (sensorData.NetworkSensor) {
+            device.SensorData.NetworkSensor = sensorData.NetworkSensor;
+        }
+        if (sensorData.LeakSensor) {
+            device.SensorData.LeakSensor = sensorData.LeakSensor;
+        }
+
         await device.save();
         return device.SensorData;
     }
@@ -108,6 +127,7 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         throw error;
     }
 };
+
 
 
 module.exports = { settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate, esp32StatusUpdate,   esp32SensorDataUpdate };
