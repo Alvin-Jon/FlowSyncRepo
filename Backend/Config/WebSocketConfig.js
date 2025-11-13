@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const Device = require('../Models/DeviceSchema');
 
 class WebSocketService {
   constructor() {
@@ -39,6 +40,10 @@ class WebSocketService {
       if (msg.type === "register-device") {
         ws.deviceId = msg.deviceId;
         this.esp32SocketMap.set(msg.deviceId, ws);
+        const device = Device.findOne({nameId: msg.deviceId});
+        device.SensorData.NetworkSensor[0].description = `Wifi Connected`;
+        device.SensorData.NetworkSensor[0].active = true;
+        await device.save();
         console.log(`✅ Device registered (ESP32): ${msg.deviceId}`);
       }
     } catch (err) {
