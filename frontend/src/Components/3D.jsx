@@ -46,10 +46,10 @@ const TankParts = ({leakage}) => {
   }), [scene]);
 
   const colorTank = new Color(
-    leakage?.detected && leakage[0].location === "tank" ? "red" : "lime"
+    leakage[0]?.detected && leakage[0].location === "tank" ? "red" : "lime"
   );
   const colorPipe = new Color(
-    leakage?.detected && leakage[0].location === "pipe" ? "red" : "lime"
+    leakage[0]?.detected && leakage[0].location === "pipe" ? "red" : "lime"
   );
 
   // 🔹 Change colors
