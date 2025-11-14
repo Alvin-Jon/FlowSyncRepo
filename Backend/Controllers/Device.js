@@ -9,7 +9,13 @@ cron.schedule('*/15 * * * * *', async () => {
   try {
     // Fetch devices where the last update was > 10 seconds ago
     const thresholdTime = new Date(now.getTime() - 15 * 1000);
-    const staleDevices = await Device.find({ updatedAt: { $lt: thresholdTime } });
+   const staleDevices = await Device.find({
+        updatedAt: { $lt: thresholdTime },
+        'SensorData.NetworkSensor.description': { 
+            $nin: ['Wifi not connected', null] 
+        }
+        });
+
 
     if (staleDevices.length > 0) {
       console.log(`🔄 Resetting ${staleDevices.length} stale device(s)`);
