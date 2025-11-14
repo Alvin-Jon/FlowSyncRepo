@@ -41,7 +41,7 @@ class WebSocketService {
       if (msg.type === "register-device") {
         ws.deviceId = msg.deviceId;
         this.esp32SocketMap.set(msg.deviceId, ws);
-        const device = Device.findOne({nameId: msg.deviceId});
+        const device = await Device.findOne({nameId: msg.deviceId});
         device.SensorData.NetworkSensor.description = `Wifi Connected`;
         device.SensorData.NetworkSensor.active = true;
 
