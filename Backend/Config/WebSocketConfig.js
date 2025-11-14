@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const Device = require('../Models/DeviceSchema');
-const { getIO, getDeviceMap } = require('./Socket');
+//const { getIO, getDeviceMap } = require('./Socket');
 
 class WebSocketService {
   constructor() {
@@ -46,12 +46,12 @@ class WebSocketService {
         device.SensorData.NetworkSensor.active = true;
 
         await device.save();
-        const io = getIO();
+       /* const io = getIO();
         const deviceSocketMap = getDeviceMap();
         const socketId = deviceSocketMap.get(msg.nameId);
         
         //inform the frontend 
-         io.to(socketId).emit("Esp32-offline");
+         io.to(socketId).emit("Esp32-offline");*/
         console.log(`✅ Device registered (ESP32): ${msg.deviceId}`);
       }
     } catch (err) {
