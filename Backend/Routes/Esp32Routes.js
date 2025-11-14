@@ -69,7 +69,7 @@ router.post('/sensor-data-update', async (req, res) => {
       io.to(socketId).emit("update-device-details", updatedSensorData);
       console.log(`✅ Sensor data sent to ${deviceId}`);
     } else {
-     // console.warn(`⚠️ Device ${deviceId} not connected`);
+      console.warn(`⚠️ Device ${deviceId} not connected`);
     }
 
     res.json({ message: 'Sensor data updated successfully', sensorData: updatedSensorData });

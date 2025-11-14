@@ -31,7 +31,6 @@ const AuthProvider = ({ children }) => {
         try {
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
-            console.log("Updated AuthProvider:",response.data)
         }
         catch (error) {
             console.error("Error updating AuthProvider:", error);
