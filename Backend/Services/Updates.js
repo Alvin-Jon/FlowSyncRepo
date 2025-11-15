@@ -102,6 +102,14 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
             if (sensorData.LeakSensor[0].description === "Leak Detected") {
                 device.status.leakage[0].detected = true;
                 device.status.leakage[0].location = "tank";
+
+                // add an event 
+                device.status.events = [
+                    {
+                        title: "Leak Detected",
+                        description : `A leak has been detected in the Tank at ${new Date().toLocaleString()}. Immediate action is recommended.`,
+                    }
+                ]
                 console.warn('Leak detected in tank');
             } else {
                 device.status.leakage[0].detected = false;
