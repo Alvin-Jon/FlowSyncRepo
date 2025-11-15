@@ -4,12 +4,6 @@ const wsService = WebSocketService.getInstance();
 
 exports.notifyESP32 = (deviceId, payload) => {
   try {
-    // Check if device is connected first
-    if (!wsService.isDeviceConnected(deviceId)) {
-      console.warn(`⚠️ ESP32 ${deviceId} is not connected, command will not be sent`);
-      return false;
-    }
-
     const success = wsService.sendToESP32(deviceId, {
       type: "command",
       payload,
@@ -17,14 +11,11 @@ exports.notifyESP32 = (deviceId, payload) => {
     });
 
     if (success) {
-      console.log(`📡 Sent command to ESP32 ${deviceId}:`, payload);
-      return true;
+      console.log(`📡 Sent message to ESP32 ${deviceId}:`, payload);
     } else {
-      console.warn(`⚠️ Failed to send command to ESP32 ${deviceId}`);
-      return false;
+      console.warn(`⚠️ Could not send message, ESP32 ${deviceId} not connected`);
     }
   } catch (error) {
-    console.error("❌ Error notifying ESP32:", error.message);
-    return false;
+    console.error("Error notifying ESP32:", error);
   }
 };
