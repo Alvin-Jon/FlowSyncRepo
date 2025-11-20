@@ -8,7 +8,7 @@ const RecentEvent = ({events}) => {
         <div className="recent-event card left">
             <h2 style={{fontSize: "1.2rem", fontWeight:"bold", marginBottom: "20px"}}> Recent Events</h2>
 
-           {leakage && !events ? 
+           {leakage && events.length > 0 ? 
             <> {events.map((event) => (
                 <div key={event.id} className="event-item" style={{borderLeft: leakage ? "4px solid red" : "4px solid green", paddingLeft: "10px", marginBottom: "25px", display: "flex", alignItems: "center", gap: "10px"}}>
                     <div className="event-icon">
