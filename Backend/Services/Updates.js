@@ -1,5 +1,6 @@
 const User = require('../Models/UserSchema');
 const Device = require('../Models/DeviceSchema');
+const {sendEmail} = require('../Services/AlertServices');
 
 
 const settingsUpdate = async (userId, newSettings) => {
@@ -98,7 +99,7 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         if (!device) throw new Error('Device not found');
 
         // Handle leak sensor (special rule)
-        if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
+        if (sensorData.LeakSensor && sensorData.LeakSensor[0] && device.status.events.length < 1) {
             if (sensorData.LeakSensor[0].description === "Leak Detected") {
                 device.status.leakage[0].detected = true;
                 device.status.leakage[0].location = "tank";
@@ -111,10 +112,18 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                     }
                 ]
                 console.warn('Leak detected in tank');
+                // send email alert
+                const user = await User.findById(device.accountLinkedTo);
+                if (user) {
+                    sendEmail(user.Email, 'Leak Detected Alert', `Hello ${user.Username},\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action to address this issue.\n\nBest regards,\nFlowsync Team`);
+                } else {
+                    console.error('User not found for sending leak alert email');
+                    }
+                    
             } else {
                 device.status.leakage[0].detected = false;
                 device.status.leakage[0].location = "tank";
-            }
+            } 
         }
 
         // Update each sensor safely
