@@ -114,6 +114,8 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
             } else {
                 device.status.leakage[0].detected = false;
                 device.status.leakage[0].location = "tank";
+                device.status.events = []; // clear events
+                console.log('No leak detected in tank');
             }
         }
 
