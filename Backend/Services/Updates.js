@@ -98,7 +98,7 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         if (!device) throw new Error('Device not found');
 
         // Handle leak sensor (special rule)
-        if (sensorData.LeakSensor && sensorData.LeakSensor[0] && device.status.events.length < 1) {
+        if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
             if (sensorData.LeakSensor[0].description === "Leak Detected") {
                 device.status.leakage[0].detected = true;
                 device.status.leakage[0].location = "tank";
@@ -111,7 +111,6 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                     }
                 ]
                 console.warn('Leak detected in tank');
-                
             } else {
                 device.status.leakage[0].detected = false;
                 device.status.leakage[0].location = "tank";
