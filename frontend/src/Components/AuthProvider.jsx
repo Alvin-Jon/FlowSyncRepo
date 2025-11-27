@@ -37,6 +37,12 @@ const AuthProvider = ({ children }) => {
         }
     };
 
+    setInterval(() => {
+        if (isAuthenticated) {
+            Update();
+        }
+    }, 10000); // Update every 10 seconds
+
 
     useEffect(() => {
         checkAuth();

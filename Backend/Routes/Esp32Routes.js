@@ -17,10 +17,10 @@ router.post('/data', async (req, res) => {
     const deviceStatus = await getDeviceState(deviceId);
 
      if (socketId) {
-      io.to(socketId).emit("update-device-details", updatedStatus);
+      io.to(socketId).emit("update-device-details");
       //console.log(`✅ Status sent to ${deviceId}`);
     }
-    
+
     res.json({ message: 'Device status fetched successfully', deviceStatus });
   } catch (error) {
     console.error('Error fetching device status:', error);
