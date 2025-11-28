@@ -12,7 +12,6 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [deviceDetails, setDeviceDetails] = useState({});
-    const [lastUpdate, setLastUpdate] = useState(0);
 
     const checkAuth = async () => {
         try {
@@ -28,16 +27,10 @@ const AuthProvider = ({ children }) => {
         }
     }; 
 
-    setInterval(() => {
-        setLastUpdate(prev => prev + 1);
-    }, 1000);
-
     const Update = async () => {
         try {
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
-            console.log(`interval between updates is ${lastUpdate} seconds`);
-            setLastUpdate(0);
         }
         catch (error) {
             console.error("Error updating AuthProvider:", error);
