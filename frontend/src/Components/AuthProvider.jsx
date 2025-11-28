@@ -36,6 +36,7 @@ const AuthProvider = ({ children }) => {
         try {
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
+            console.log(`interval between updates is ${lastUpdate} seconds`);
             setLastUpdate(0);
         }
         catch (error) {
