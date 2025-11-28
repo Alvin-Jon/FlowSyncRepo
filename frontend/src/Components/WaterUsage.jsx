@@ -1,6 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const WaterUsage = ({history}) => {
+const WaterUsage = () => {
   const data = [
     { day: "Mon", usage: 70 },
     { day: "Tue", usage: 90 },

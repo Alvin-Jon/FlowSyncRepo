@@ -35,7 +35,7 @@ const Dashboard = ({sendNotification}) => {
             />
 
             <SensorStatus sensorData={deviceDetails?.Details?.device?.SensorData} />
-            <WaterUsage history={deviceDetails?.Details?.device?.status?.history?.logs} />
+            <WaterUsage /*story={deviceDetails?.Details?.device?.status?.history?.logs}*/ />
 
         </>
     )
