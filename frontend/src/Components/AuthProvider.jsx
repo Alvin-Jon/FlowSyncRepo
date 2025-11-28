@@ -12,6 +12,7 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [deviceDetails, setDeviceDetails] = useState({});
+    const [lastUpdate, setLastUpdate] = useState(0);
 
     const checkAuth = async () => {
         try {
@@ -25,23 +26,22 @@ const AuthProvider = ({ children }) => {
         } finally {
             setLoading(false); 
         }
-    };
+    }; 
+
+    setInterval(() => {
+        setLastUpdate(prev => prev + 1);
+    }, 1000);
 
     const Update = async () => {
         try {
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
+            setLastUpdate(0);
         }
         catch (error) {
             console.error("Error updating AuthProvider:", error);
         }
     };
-
-    setInterval(() => {
-        if (isAuthenticated) {
-            Update();
-        }
-    }, 10000); // Update every 10 seconds
 
 
     useEffect(() => {
@@ -83,4 +83,4 @@ const AuthProvider = ({ children }) => {
     );
 };
 
-export default AuthProvider;
+export default AuthProvider; 

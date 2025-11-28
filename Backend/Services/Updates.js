@@ -118,14 +118,14 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                     'Urgent: Leak Detected in Your Water Tank',
                     `Dear User,\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action to address this issue to prevent potential water damage and wastage.\n\nBest regards,\nFlowsync Team`
                 );
-            }
+            } 
             } else {
                 device.status.leakage[0].detected = false;
                 device.status.leakage[0].location = "tank";
                 device.status.events = []; // clear events
                 console.log('No leak detected in tank');
             }
-        }
+        } 
 
         // Update each sensor safely
         if (sensorData.TankLevelSensor) {
