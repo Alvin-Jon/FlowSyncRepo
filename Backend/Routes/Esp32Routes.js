@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getDeviceState } = require('../Services/State');
-const {esp32StatusUpdate, esp32SensorDataUpdate} = require('../Services/Updates');
+const {esp32StatusUpdate, esp32SensorDataUpdate, isOnline} = require('../Services/Updates');
 const { getIO, getDeviceMap } = require('../Config/Socket');
 
 // 🧩 Get device data
@@ -16,9 +16,12 @@ router.post('/data', async (req, res) => {
     const socketId = deviceSocketMap.get(deviceId);
     const deviceStatus = await getDeviceState(deviceId);
 
+    await isOnline(deviceId);
+
      if (socketId) {
       io.to(socketId).emit("update-device-details");
-      //console.log(`✅ Status sent to ${deviceId}`);
+    } else {
+      console.warn(`⚠️ Device ${deviceId} not connected`);
     }
 
     res.json({ message: 'Device status fetched successfully', deviceStatus });

@@ -148,8 +148,25 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         console.error('Error updating esp32 sensor data:', error);
         throw error;
     }
-};
+}; 
+
+
+const isOnline = async (id) => {
+    const device = await Device.findOne({ nameId: id });
+    if (!device) {
+        throw new Error('Device not found');
+    } 
+   try {
+    device.SensorData.NetworkSensor[0].description = "Wifi connected";
+    device.SensorData.NetworkSensor[0].active = true;
+    await device.save(); 
+    } catch (error) {
+        console.error('Error updating network sensor status:', error);
+        throw error;
+    }
+    return device.SensorData;
+}
 
 
 
-module.exports = { settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate, esp32StatusUpdate,   esp32SensorDataUpdate };
+module.exports = { isOnline ,settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate, esp32StatusUpdate,   esp32SensorDataUpdate };
