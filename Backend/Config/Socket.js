@@ -57,6 +57,7 @@ function initSocket(server) {
         io.to(socket.id).emit("pump-status-updated", updatedStatus);
         notifyESP32(deviceId, { pumpStatus, autoStatus });
         sendPumpCommand(deviceId, pumpStatus);
+        sendAutomationConfig(deviceId, {auto_pump : autoStatus});
         console.log(`🔄 Pump status updated for device: ${deviceId}`);
       }
         catch (error) {

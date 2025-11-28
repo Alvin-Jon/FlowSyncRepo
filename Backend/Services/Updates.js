@@ -100,12 +100,14 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
 
         // Handle leak sensor (special rule)
         if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
-            if (sensorData.LeakSensor[0].description === "Leak Detected") {
+            if (sensorData.LeakSensor[0].description.includes("Detected")) {
+                console.log("second test passed");
                 device.status.leakage[0].detected = true;
                 device.status.leakage[0].location = "tank";
 
                 // add an event 
              if(device.status.events.length < 1 ) {
+                console.log("third test passed");
                    device.status.events = [
                     {
                         title: "Leak Detected",
@@ -120,6 +122,7 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                 );
             } 
             } else {
+                console.log("Second test failed");
                 device.status.leakage[0].detected = false;
                 device.status.leakage[0].location = "tank";
                 device.status.events = []; // clear events
