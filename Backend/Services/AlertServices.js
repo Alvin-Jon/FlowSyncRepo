@@ -2,12 +2,15 @@ const nodemailer = require('nodemailer');
 
 // Email transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  port: 587,
-  secure: false,
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASS
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -28,5 +31,8 @@ const sendEmail = async (to, subject, text, html = null) => {
     console.error(`❌ Failed to send email to ${to}:`, error.message);
   }
 };
+
+
+sendEmail('ingbianjonathan@gmail.com', 'Test Email', 'This is a test email from FlowSync.');
 
 module.exports = { sendEmail };
