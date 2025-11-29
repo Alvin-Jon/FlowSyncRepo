@@ -33,6 +33,6 @@ const sendEmail = async (to, subject, text, html = null) => {
 };
 
 
-sendEmail('ingbianjonathan@gmail.com', 'Test Email', 'This is a test email from FlowSync.');
+sendEmail('jingbian556@gmail.com', 'Test Email', 'This is a test email from FlowSync.');
 
 module.exports = { sendEmail };
