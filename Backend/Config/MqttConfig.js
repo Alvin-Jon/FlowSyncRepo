@@ -1,7 +1,6 @@
 const mqtt = require("mqtt");
 const { esp32StatusUpdate, esp32SensorDataUpdate } = require('../Services/Updates');
 const Device = require('../Models/DeviceSchema');
-const { getIO, getDeviceMap } = require('./Socket');
 
 // HiveMQ Cloud broker details
 const brokerUrl = "mqtts://0568342c30994f368c273f781658d9e8.s1.eu.hivemq.cloud:8883";

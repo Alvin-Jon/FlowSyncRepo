@@ -67,6 +67,6 @@ const DeviceSchema = new Schema({
   SensorData: { type: SensorDataSchema, default: () => ({}) },
   paired: { type: Boolean, default: false },
   settings: { type: SettingsSchema, default: () => ({}) },
-}, { timestamps: true });
+}, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('Device', DeviceSchema);

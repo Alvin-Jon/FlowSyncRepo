@@ -1,6 +1,8 @@
 const User = require('../Models/UserSchema');
 const Device = require('../Models/DeviceSchema');
 const {sendEmail} = require('./AlertServices');
+const { getIO, getDeviceMap } = require('../Config/Socket');
+
 
 
 const settingsUpdate = async (userId, newSettings) => {
@@ -84,6 +86,12 @@ const esp32StatusUpdate = async (deviceId, newStatus) => {
         }
         // Update device status
         device.status = { ...device.status, ...newStatus };
+        const io = getIO();
+        const deviceSocketMap = getDeviceMap();
+        const socketId = deviceSocketMap.get(deviceId);
+        if (socketId) {
+            io.to(socketId).emit("update-device-details");
+        }
         await device.save();
         return device.status;
     }
@@ -142,6 +150,13 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         }
 
         await device.save();
+
+        const io = getIO();
+        const deviceSocketMap = getDeviceMap();
+        const socketId = deviceSocketMap.get(deviceId);
+        if (socketId) {
+            io.to(socketId).emit("update-device-details");
+        }
         return device.SensorData;
     }
     catch (error) {
