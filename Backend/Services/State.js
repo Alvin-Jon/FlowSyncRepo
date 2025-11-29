@@ -37,6 +37,23 @@ async function getDeviceState(deviceId) {
         console.error('Error fetching device state:', error);
         throw error;
     }
+} 
+
+async function getEmailByDeviceId(deviceId) {
+    try {
+        const device = await Device.findOne({ nameId: deviceId });
+        if (!device) {
+            throw new Error('Device not found');
+        }
+        const user = await User.findById(device.accountLinkedTo);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user.Email;
+    } catch (error) {
+        console.error('Error fetching email by device ID:', error);
+        throw error;
+    }
 }
 
-module.exports = { getUserState, getDeviceState };
+module.exports = { getUserState, getDeviceState, getEmailByDeviceId };

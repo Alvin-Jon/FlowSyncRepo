@@ -33,7 +33,11 @@ function initSocket(server) {
       try {
         const updatedStatus = await automationStatusUpdate(deviceId, newStatus);
         io.to(socket.id).emit("automation-status-updated", updatedStatus);
-        const Status = {auto_pump : newStatus.autoPump, minLevel: newStatus.minLevel, maxLevel: newStatus.maxLevel};
+        const Status = {
+          auto_pump : newStatus.autoPump,
+           minLevel: newStatus.waterThreshold?.minLevel, 
+           maxLevel: newStatus.waterThreshold?.maxLevel
+        };
         sendAutomationConfig(deviceId, Status);
         console.log(`🔄 Automation status updated for device: ${deviceId}`);
       } catch (error) {

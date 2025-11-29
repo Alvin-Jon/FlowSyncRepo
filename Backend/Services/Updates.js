@@ -2,6 +2,7 @@ const User = require('../Models/UserSchema');
 const Device = require('../Models/DeviceSchema');
 const {sendEmail} = require('./AlertServices');
 const {alertFrontend} = require('./SocketEmitter');
+const {getEmailByDeviceId} = require('./State');
 
 
 const settingsUpdate = async (userId, newSettings) => {
@@ -115,8 +116,9 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                     }
                 ]
                 console.warn('Leak detected in tank');
+                const userEmail = await getEmailByDeviceId(deviceId);
                 sendEmail( 
-                    device.accountLinkedTo,
+                    userEmail,
                     'Urgent: Leak Detected in Your Water Tank',
                     `Dear User,\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action to address this issue to prevent potential water damage and wastage.\n\nBest regards,\nFlowsync Team`
                 );
