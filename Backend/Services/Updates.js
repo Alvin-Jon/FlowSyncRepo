@@ -78,92 +78,115 @@ const watersupplyStatusUpdate = async (deviceId, supplyStatus) => {
 };
 
 
-const esp32StatusUpdate = async (deviceId, newStatus) => {  
+const esp32StatusUpdate = async (deviceId, newStatus) => {
     try {
-        const device = await Device.findOne({ nameId: deviceId });
-        if (!device) {
+        const update = {
+            $set: {
+                status: newStatus
+                    ? { ...newStatus }
+                    : {}
+            }
+        };
+
+        const updatedDevice = await Device.findOneAndUpdate(
+            { nameId: deviceId },
+            update,
+            { new: true }
+        );
+
+        if (!updatedDevice) {
             throw new Error('Device not found');
         }
-        // Update device status
-        device.status = { ...device.status, ...newStatus };
+
+        // Emit update to device socket
         const io = getIO();
         const deviceSocketMap = getDeviceMap();
         const socketId = deviceSocketMap.get(deviceId);
         if (socketId) {
             io.to(socketId).emit("update-device-details");
         }
-        await device.save();
-        return device.status;
-    }
-    catch (error) {
+
+        return updatedDevice.status;
+    } catch (error) {
         console.error('Error updating status:', error);
         throw error;
     }
 };
 
+
 const esp32SensorDataUpdate = async (deviceId, sensorData) => {
     try {
-        const device = await Device.findOne({ nameId: deviceId });
-        if (!device) throw new Error('Device not found');
-
-        // Handle leak sensor (special rule)
+        // Build update object
+        const updateFields = {};
+        
+        // Leak Sensor Handling
         if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
-            if (sensorData.LeakSensor[0].description.includes("Detected")) {
-                device.status.leakage[0].detected = true;
-                device.status.leakage[0].location = "tank";
+            const leakDetected = sensorData.LeakSensor[0].description.includes("Detected");
 
-                // add an event 
-             if(device.status.events.length < 1 ) {
-                   device.status.events = [
+            updateFields["status.leakage.0.detected"] = leakDetected;
+            updateFields["status.leakage.0.location"] = "tank";
+
+            if (leakDetected) {
+                updateFields["status.events"] = [
                     {
                         title: "Leak Detected",
-                        description : `A leak has been detected in the Tank at ${new Date().toLocaleString()}. Immediate action is recommended.`,
+                        description: `A leak has been detected in the Tank at ${new Date().toLocaleString()}. Immediate action is recommended.`
                     }
-                ]
-                console.warn('Leak detected in tank');
-                sendEmail( 
-                    device.accountLinkedTo,
-                    'Urgent: Leak Detected in Your Water Tank',
-                    `Dear User,\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action to address this issue to prevent potential water damage and wastage.\n\nBest regards,\nFlowsync Team`
-                );
-            } 
+                ];
+
+                console.warn("Leak detected in tank");
+
+                // Send email alert
+                const device = await Device.findOne({ nameId: deviceId });
+                if (device) {
+                    sendEmail(
+                        device.accountLinkedTo,
+                        'Urgent: Leak Detected in Your Water Tank',
+                        `Dear User,\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action.\n\nBest regards,\nFlowsync Team`
+                    );
+                }
             } else {
-                device.status.leakage[0].detected = false;
-                device.status.leakage[0].location = "tank";
-                device.status.events = []; // clear events
-                console.log('No leak detected in tank');
+                updateFields["status.events"] = [];
+                console.log("No leak detected in tank");
             }
-        } 
-
-        // Update each sensor safely
-        if (sensorData.TankLevelSensor) {
-            device.SensorData.TankLevelSensor = sensorData.TankLevelSensor;
-        }
-        if (sensorData.FlowSensor) {
-            device.SensorData.FlowSensor = sensorData.FlowSensor;
-        }
-        if (sensorData.NetworkSensor) {
-            device.SensorData.NetworkSensor = sensorData.NetworkSensor;
-        }
-        if (sensorData.LeakSensor) {
-            device.SensorData.LeakSensor = sensorData.LeakSensor;
         }
 
-        await device.save();
+        // --- Sensor Data Updates ---
+        if (sensorData.TankLevelSensor)
+            updateFields["SensorData.TankLevelSensor"] = sensorData.TankLevelSensor;
 
+        if (sensorData.FlowSensor)
+            updateFields["SensorData.FlowSensor"] = sensorData.FlowSensor;
+
+        if (sensorData.NetworkSensor)
+            updateFields["SensorData.NetworkSensor"] = sensorData.NetworkSensor;
+
+        if (sensorData.LeakSensor)
+            updateFields["SensorData.LeakSensor"] = sensorData.LeakSensor;
+
+        // Execute database update (no version errors)
+        const updatedDevice = await Device.findOneAndUpdate(
+            { nameId: deviceId },
+            { $set: updateFields },
+            { new: true }
+        );
+
+        if (!updatedDevice) throw new Error("Device not found");
+
+        // Emit to frontend
         const io = getIO();
         const deviceSocketMap = getDeviceMap();
         const socketId = deviceSocketMap.get(deviceId);
-        if (socketId) {
-            io.to(socketId).emit("update-device-details");
-        }
-        return device.SensorData;
-    }
-    catch (error) {
-        console.error('Error updating esp32 sensor data:', error);
+        if (socketId) io.to(socketId).emit("update-device-details");
+
+        return updatedDevice.SensorData;
+
+    } catch (error) {
+        console.error("Error updating esp32 sensor data:", error);
         throw error;
     }
-}; 
+};
+
 
 
 const isOnline = async (id) => {
