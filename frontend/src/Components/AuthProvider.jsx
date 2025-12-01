@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [deviceDetails, setDeviceDetails] = useState({});
-    const [fault, setFault] = useState(true);
+    const [fault, setFault] = useState(false);
 
     const checkAuth = async () => {
         try {
