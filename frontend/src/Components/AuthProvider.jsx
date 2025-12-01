@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [deviceDetails, setDeviceDetails] = useState({});
-    const [fault, setFault] = useState(false);
+    const [fault, setFault] = useState(true);
 
     const checkAuth = async () => {
         try {
@@ -40,21 +40,14 @@ const AuthProvider = ({ children }) => {
 
     // for push notification on leak detection
         function showNotification(title, body) {
-            if (!("Notification" in window)) {
-                console.log("Notifications not supported on this device.");
-                return;
-            }
+            navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification("Leak Detected", {
+                body: "The auto pump turned ON because the water level dropped.",
+                icon: "/thumbnail.png",
+                vibrate: [200, 100, 200],
+            });
+            });
 
-            if (Notification.permission !== "granted") {
-                console.log("Notification permission not granted.");
-                return;
-            }
-
-
-        new Notification(title, {
-            body: body,
-            icon: "/thumbnail.png"
-        });
         }
 
 
