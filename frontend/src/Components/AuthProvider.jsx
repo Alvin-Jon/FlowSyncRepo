@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
         function showNotification(title, body) {
             navigator.serviceWorker.ready.then(registration => {
             registration.showNotification("Leak Detected", {
-                body: "The auto pump turned ON because the water level dropped.",
+                body: 'A leak has been detected in your water tank. Please take immediate action.',
                 icon: "/thumbnail.png",
                 vibrate: [200, 100, 200],
             });
