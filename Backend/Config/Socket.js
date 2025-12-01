@@ -62,18 +62,30 @@ function initSocket(server) {
     });
 
     socket.on("update-pump-status", async ({ deviceId, pumpStatus, autoStatus }) => {
-      try {
-        const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
-        io.to(socket.id).emit("pump-status-updated", updatedStatus);
-        notifyESP32(deviceId, { pumpStatus, autoStatus });
+  try {
+    const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
+    io.to(socket.id).emit("pump-status-updated", updatedStatus);
+    notifyESP32(deviceId, { pumpStatus, autoStatus });
 
-        sendPumpCommand(deviceId, pumpStatus);
-        console.log(`🔄 Pump status updated for device: ${deviceId}`);
-      }
-        catch (error) {
-        console.error("Error updating pump status:", error);
-      }
-    });
+
+    // Automation settings update
+    sendAutomationConfig(deviceId, { auto_pump: autoStatus });
+
+    // 👇 FIX HERE — If leaving auto mode, force pump OFF
+    if (autoStatus === false) {
+      pumpStatus = false;
+      sendPumpCommand(deviceId, false);
+    } else {
+      // Normal manual toggle
+      sendPumpCommand(deviceId, pumpStatus);
+    }
+
+    console.log(`🔄 Pump status updated for device: ${deviceId}`);
+  } catch (error) {
+    console.error("Error updating pump status:", error);
+  }
+});
+
 
     socket.on("update-supply-status", async ({ deviceId, supplyStatus }) => {
       try {
