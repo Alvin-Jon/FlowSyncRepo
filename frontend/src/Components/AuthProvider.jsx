@@ -40,6 +40,17 @@ const AuthProvider = ({ children }) => {
 
     // for push notification on leak detection
         function showNotification(title, body) {
+            if (!("Notification" in window)) {
+                console.log("Notifications not supported on this device.");
+                return;
+            }
+
+            if (Notification.permission !== "granted") {
+                console.log("Notification permission not granted.");
+                return;
+            }
+
+
         new Notification(title, {
             body: body,
             icon: "/thumbnail.png"
