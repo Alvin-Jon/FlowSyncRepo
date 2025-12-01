@@ -8,9 +8,6 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASS
-  },
-  tls: {
-    rejectUnauthorized: false
   }
 });
 
@@ -31,8 +28,5 @@ const sendEmail = async (to, subject, text, html = null) => {
     console.error(`❌ Failed to send email to ${to}:`, error.message);
   }
 };
-
-
-sendEmail('jingbian556@gmail.com', 'Test Email', 'This is a test email from FlowSync.');
 
 module.exports = { sendEmail };

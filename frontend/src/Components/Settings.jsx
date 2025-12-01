@@ -6,11 +6,19 @@ import Account from "./Account";
 import { Save } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import socket from "../Socket";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Settings = ({sendNotification}) => {
-    const { deviceDetails, setDeviceDetails } = useAuth();
+    const { deviceDetails, setDeviceDetails, fault, setFault } = useAuth();
     const [newStatus, setNewStatus] = useState({});
+
+     useEffect(() => {
+          if (fault) {
+            sendNotification('Leak Detected', 'A leak has been detected in your water tank. Please take immediate action.', 'warning');
+            setFault(false); // Reset fault after notification
+          }
+        }, [fault, sendNotification, setFault]);
+        
 
     const saveSettings = async () => {
         // API call to save 

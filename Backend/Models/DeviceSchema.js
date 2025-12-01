@@ -51,7 +51,7 @@ const SettingsSchema = new Schema({
   notification: {
     type: [NotificationSchema],
     default: [
-      { name: 'Push Notifications', enabled: true },
+      { name: 'Push Notifications', enabled: false },
       { name: 'Email Notifications', enabled: true },
       { name: 'SMS Alerts', enabled: false },
     ],

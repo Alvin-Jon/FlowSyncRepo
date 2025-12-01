@@ -12,13 +12,13 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [deviceDetails, setDeviceDetails] = useState({});
+    const [fault, setFault] = useState(true);
 
     const checkAuth = async () => {
         try {
             setLoading(true);
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
-            console.log(response.data)
             setIsAuthenticated(true);
         } catch {
             setIsAuthenticated(false);
@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
             setLoading(false); 
         }
     }; 
+
 
     const Update = async () => {
         try {
@@ -37,10 +38,23 @@ const AuthProvider = ({ children }) => {
         }
     };
 
+    // for push notification on leak detection
+        function showNotification(title, body) {
+        new Notification(title, {
+            body: body,
+            icon: "/thumbnail.png"
+        });
+        }
+
 
     useEffect(() => {
         checkAuth();
     }, []);
+
+    useEffect(() => {
+        if (fault) showNotification('Leak Detected', 'A leak has been detected in your water tank. Please take immediate action.');
+    }
+    , [fault]);
 
 
     useEffect(() => {
@@ -54,6 +68,9 @@ const AuthProvider = ({ children }) => {
 
             socket.on("update-device-details", handleUpdate);
             socket.on("Esp32-offline", handleUpdate)
+            socket.on("leak-detected", () => {
+                setFault(true);
+            });
 
             return () => {
             socket.off("update-device-details", handleUpdate);
@@ -65,13 +82,12 @@ const AuthProvider = ({ children }) => {
 
 
 
-
     if (loading) {
         return <div className='error-container'><ThreeDots  fill="#0077ff"/></div>; 
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, deviceDetails, setDeviceDetails, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, deviceDetails, setDeviceDetails, checkAuth, fault, setFault }}>
             {children}
         </AuthContext.Provider>
     );

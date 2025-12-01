@@ -109,10 +109,13 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
 
                 // add an event 
              if(device.status.events.length < 1 ) {
+               // add one hour to current time\
+               const time = new Date();
+               time.setHours(time.getHours() + 1);
                    device.status.events = [
                     {
                         title: "Leak Detected",
-                        description : `A leak has been detected in the Tank at ${new Date().toLocaleString()}. Immediate action is recommended.`,
+                        description : `A leak has been detected in the Tank at ${time.toLocaleString()}. Immediate action is recommended.`,
                     }
                 ]
                 console.warn('Leak detected in tank');
@@ -122,6 +125,8 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
                     'Urgent: Leak Detected in Your Water Tank',
                     `Dear User,\n\nA leak has been detected in your water tank at ${new Date().toLocaleString()}. Please take immediate action to address this issue to prevent potential water damage and wastage.\n\nBest regards,\nFlowsync Team`
                 );
+
+                alertFrontend(deviceId, "leak-detected", device.status.events[0]);
             } 
             } else {
                 device.status.leakage[0].detected = false;

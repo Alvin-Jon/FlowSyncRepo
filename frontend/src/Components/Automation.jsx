@@ -8,11 +8,18 @@ import { useAuth } from "./AuthProvider";
 import socket from "../Socket";
 
 const Automation = ({sendNotification}) => {
-    const { deviceDetails, setDeviceDetails } = useAuth();
+    const { deviceDetails, setDeviceDetails, fault, setFault } = useAuth();
     const {minLevel, maxLevel} = deviceDetails.Details.device.status.waterThreshold;
     const [newStatus, setNewStatus] = useState({});
 
+    useEffect(() => {
+      if (fault) {
+        sendNotification('Leak Detected', 'A leak has been detected in your water tank. Please take immediate action.', 'warning');
+        setFault(false); // Reset fault after notification
+      }
+    }, [fault, sendNotification, setFault]);
 
+    
     const saveSettings = async () => {
         // API call to save 
         socket.emit("update-automation-status", {

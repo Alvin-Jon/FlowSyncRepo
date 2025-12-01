@@ -5,10 +5,18 @@ import WaterSupply from "./WaterSupply";
 import SensorStatus from "./SensorStatus";
 import WaterUsage from "./WaterUsage";
 import { useAuth } from "./AuthProvider";
-import useEffect from "react";
+import {useEffect} from "react";
 
 const Dashboard = ({sendNotification}) => {
-    const { deviceDetails, setDeviceDetails, checkAuth } = useAuth();
+    const { deviceDetails, setDeviceDetails, fault, setFault } = useAuth();
+
+
+    useEffect(() => {
+      if (fault) {
+        sendNotification('Leak Detected', 'A leak has been detected in your water tank. Please take immediate action.', 'warning');
+        setFault(false); // Reset fault after notification
+      }
+    }, [fault, sendNotification, setFault]);
 
   if (!deviceDetails?.Details?.device) {
     return <div className="loading">Loading Dashboard...</div>;

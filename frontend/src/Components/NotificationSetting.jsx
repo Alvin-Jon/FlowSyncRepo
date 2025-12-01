@@ -55,6 +55,7 @@ const NotificationSetting = ({ items, setNewStatus }) => {
           <Toggle
             state={item.enabled}
             setParentState={(newState) => handleToggleChange(item._id, newState)}
+            pushNotify={item.name === "Push Notifications"}
           />
         </div>
       ))}

@@ -1,13 +1,25 @@
 import { useState } from "react";
 import Switch from "react-switch";
 
-const  Toggle = ({state, disabled, callFunction, setParentState}) => {
+const  Toggle = ({state, disabled, callFunction, setParentState, pushNotify}) => {
   const [checked, setChecked] = useState(state || false);
 
-  function handleToggle(checked) {
+  async function handleToggle(checked) {
     setChecked(checked);
     if(setParentState) setParentState(checked);
     if(callFunction) callFunction(checked);
+    if(pushNotify && checked) {
+      async function requestNotificationPermission() {
+      const permission = await Notification.requestPermission();
+
+        if (permission === "granted") {
+          console.log("Notifications allowed");
+        } else {
+          console.log("Notifications blocked");
+        }
+      }
+      requestNotificationPermission();
+    }
   }
 
   return (

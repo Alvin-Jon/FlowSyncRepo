@@ -60,6 +60,8 @@ function initSocket(server) {
         const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
         io.to(socket.id).emit("pump-status-updated", updatedStatus);
         notifyESP32(deviceId, { pumpStatus, autoStatus });
+
+        if(!autoStatus) pumpStatus = false// safety measure;
         sendPumpCommand(deviceId, pumpStatus);
         sendAutomationConfig(deviceId, {auto_pump : autoStatus});
         console.log(`🔄 Pump status updated for device: ${deviceId}`);
