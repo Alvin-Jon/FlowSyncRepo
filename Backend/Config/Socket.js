@@ -21,10 +21,16 @@ function initSocket(server) {
     console.log(`⚡ Client connected: ${socket.id}`);
 
     socket.on("register-device", (deviceId) => {
-      deviceSocketMap.set(deviceId, socket.id);
-      socket.deviceId = deviceId;
-      console.log(`✅ Device registered: ${deviceId}`);
-    });
+    if (!deviceSocketMap.has(deviceId)) {
+      deviceSocketMap.set(deviceId, new Set());
+    }
+
+    deviceSocketMap.get(deviceId).add(socket.id);
+    socket.deviceId = deviceId;
+
+  console.log(`✅ Device registered: ${deviceId} on socket ${socket.id}`);
+});
+
 
     
 
@@ -61,8 +67,6 @@ function initSocket(server) {
         io.to(socket.id).emit("pump-status-updated", updatedStatus);
         notifyESP32(deviceId, { pumpStatus, autoStatus });
 
-        if(!autoStatus && !pumpStatus) pumpStatus = false// safety measure;
-        sendAutomationConfig(deviceId, {auto_pump : autoStatus});
         sendPumpCommand(deviceId, pumpStatus);
         console.log(`🔄 Pump status updated for device: ${deviceId}`);
       }
@@ -88,10 +92,17 @@ function initSocket(server) {
 
 
     socket.on("disconnect", () => {
-      if (socket.deviceId) {
-        deviceSocketMap.delete(socket.deviceId);
-        console.log(`❌ Device disconnected: ${socket.deviceId}`);
+      const deviceId = socket.deviceId;
+      if (deviceId && deviceSocketMap.has(deviceId)) {
+        const set = deviceSocketMap.get(deviceId);
+        set.delete(socket.id);
+
+        if (set.size === 0) {
+          deviceSocketMap.delete(deviceId);
+        }
       }
+
+      console.log(`❌ Socket disconnected: ${socket.id}`);
     });
   });
 
