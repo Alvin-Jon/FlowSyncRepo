@@ -41,8 +41,8 @@ const AuthProvider = ({ children }) => {
     // for push notification on leak detection
         function showNotification(title, body) {
             navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification("Leak Detected", {
-                body: 'A leak has been detected in your water tank. Please take immediate action.',
+            registration.showNotification(title, {
+                body: body,
                 icon: "/thumbnail.png",
                 vibrate: [200, 100, 200],
             });

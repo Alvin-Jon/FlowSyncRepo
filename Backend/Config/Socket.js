@@ -62,24 +62,40 @@ function initSocket(server) {
     });
 
     socket.on("update-pump-status", async ({ deviceId, pumpStatus, autoStatus }) => {
-  try {
-    if(autoStatus === true){
-      pumpStatus = true;
-    }
-    const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
-    io.to(socket.id).emit("pump-status-updated", updatedStatus);
-    notifyESP32(deviceId, { pumpStatus, autoStatus });
+      try {
+        const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
+        io.to(socket.id).emit("pump-status-updated", updatedStatus);
+        notifyESP32(deviceId, { pumpStatus, autoStatus });
 
+        // sending pump command
+        sendPumpCommand(deviceId, pumpStatus);
 
-    // Automation settings update
-    sendAutomationConfig(deviceId, { auto_pump: autoStatus });
-    sendPumpCommand(deviceId, pumpStatus);
-
-    console.log(`🔄 Pump status updated for device: ${deviceId}`);
-  } catch (error) {
-    console.error("Error updating pump status:", error);
-  }
+        console.log(`🔄 Pump status updated for device: ${deviceId}`);
+      } catch (error) {
+        console.error("Error updating pump status:", error);
+      }
 });
+
+
+ socket.on("update-autopump-status", async ({ deviceId, pumpStatus, autoStatus }) => {
+      try {
+        const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
+        io.to(socket.id).emit("pump-status-updated", updatedStatus);
+        notifyESP32(deviceId, { pumpStatus, autoStatus });
+        // Automation settings update
+        sendAutomationConfig(deviceId, { auto_pump: autoStatus });
+        if(autoStatus === false){
+          settimeout (() => {
+            sendPumpCommand (deviceId, false);
+          }, 1000);
+        }
+        console.log(`🔄auto Pump status updated for device: ${deviceId}`);
+      } catch (error) {
+        console.error("Error updating auto pump status:", error);
+      }
+});
+
+
 
 
     socket.on("update-supply-status", async ({ deviceId, supplyStatus }) => {
