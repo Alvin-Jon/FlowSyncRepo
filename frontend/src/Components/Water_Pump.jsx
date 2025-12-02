@@ -31,7 +31,7 @@ const Water_Pump = ({ sendNotification, setDeviceDetails, deviceDetails,pumpStat
   };
 
 const autoPump = async (newState) => {
-  socket.emit("update-autopump-status", {
+  socket.emit("update-pump-status", {
       deviceId: deviceDetails.Details.device.nameId,
       pumpStatus: pumpState,
       autoStatus: newState
