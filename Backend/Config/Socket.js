@@ -63,6 +63,9 @@ function initSocket(server) {
 
     socket.on("update-pump-status", async ({ deviceId, pumpStatus, autoStatus }) => {
   try {
+    if(autoStatus === true){
+      pumpStatus = true;
+    }
     const updatedStatus = await waterPumpStatusUpdate(deviceId, pumpStatus, autoStatus);
     io.to(socket.id).emit("pump-status-updated", updatedStatus);
     notifyESP32(deviceId, { pumpStatus, autoStatus });
@@ -70,15 +73,7 @@ function initSocket(server) {
 
     // Automation settings update
     sendAutomationConfig(deviceId, { auto_pump: autoStatus });
-
-    // 👇 FIX HERE — If leaving auto mode, force pump OFF
-    if (autoStatus === false) {
-      pumpStatus = false;
-      sendPumpCommand(deviceId, false);
-    } else {
-      // Normal manual toggle
-      sendPumpCommand(deviceId, pumpStatus);
-    }
+    sendPumpCommand(deviceId, pumpStatus);
 
     console.log(`🔄 Pump status updated for device: ${deviceId}`);
   } catch (error) {
