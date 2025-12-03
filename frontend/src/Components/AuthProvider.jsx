@@ -20,6 +20,7 @@ const AuthProvider = ({ children }) => {
             const response =  await api.get('auth/check-isAuthenticated', { withCredentials: true });
             setDeviceDetails(response.data);
             setIsAuthenticated(true);
+            console.log(response.data);
         } catch {
             setIsAuthenticated(false);
         } finally {

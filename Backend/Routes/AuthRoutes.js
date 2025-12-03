@@ -53,10 +53,10 @@ router.post('/register', async (req, res) => {
     });
 
     // Initialize water history for the device
-    const day = new Date().toLocaleString('en-US', { weekday: 'short' });
+    const day = new Date();
     const newWaterHistory = new WaterHistory({
       //deviceId: newDevice._id,
-      logs: [{ day: day, usage: 10 }],
+      logs: [{ day: day, usage: 0 }],
     });
 
     // Create device linked to the new user
