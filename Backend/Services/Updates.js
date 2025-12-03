@@ -1,5 +1,6 @@
 const User = require('../Models/UserSchema');
 const Device = require('../Models/DeviceSchema');
+const waterHistory = require('../Models/WaterHistory');
 const {sendEmail} = require('./AlertServices');
 const {alertFrontend} = require('./SocketEmitter');
 const {getEmailByDeviceId} = require('./State');
@@ -101,6 +102,9 @@ const esp32SensorDataUpdate = async (deviceId, sensorData) => {
         const device = await Device.findOne({ nameId: deviceId });
         if (!device) throw new Error('Device not found');
 
+        // Update water usage
+        await WaterUsageUpdate(deviceId, sensorData);
+        
         // Handle leak sensor (special rule)
         if (sensorData.LeakSensor && sensorData.LeakSensor[0]) {
             if (sensorData.LeakSensor[0].description.includes("Detected")) {
@@ -177,6 +181,53 @@ const isOnline = async (id) => {
     }
     return device.SensorData;
 }
+
+const WaterUsageUpdate = async (deviceId, sensorData) => {
+    try {
+        const waterHistoryRecord = await waterHistory.findOne({ deviceId: deviceId });
+        if (!waterHistoryRecord) {
+            throw new Error('Water history record not found');
+        }
+
+        // Extract flow rate number
+        const flowRate = sensorData.FlowSensor[0].description.replace("L/min", "");
+        const flowRateNum = parseFloat(flowRate);
+
+        // Convert L/min → liters per 5 seconds
+        const waterUsed = flowRateNum / 12;
+
+        // Get today's date (reset to midnight)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Try to find existing log entry for today
+        const existingLog = waterHistoryRecord.logs.find(log => {
+            const logDate = new Date(log.day);
+            logDate.setHours(0, 0, 0, 0);
+            return logDate.getTime() === today.getTime();
+        });
+
+        if (existingLog) {
+            // Increment usage
+            existingLog.usage += waterUsed;
+        } else {
+            // Create new log for today
+            waterHistoryRecord.logs.push({
+                day: new Date(),
+                usage: waterUsed
+            });
+        }
+
+        await waterHistoryRecord.save();
+
+    } catch (error) {
+        console.error('Error updating water usage:', error);
+        throw error;
+    }
+};
+
+
+
 
 
 

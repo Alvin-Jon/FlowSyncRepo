@@ -43,7 +43,7 @@ const Dashboard = ({sendNotification}) => {
             />
 
             <SensorStatus sensorData={deviceDetails?.Details?.device?.SensorData} />
-            <WaterUsage /*story={deviceDetails?.Details?.device?.status?.history?.logs}*/ />
+            <WaterUsage usage = {deviceDetails?.Details?.device?.status?.history?.logs} />
 
         </>
     )

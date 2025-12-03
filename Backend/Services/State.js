@@ -13,7 +13,12 @@ async function getUserState(userId) {
         if (!device) {
             throw new Error('Device not found for user');
         }
-        const waterHistory = await WaterHistory.findById(device.history);
+
+        const history = await WaterHistory.findOne(
+            { deviceId: device._id },
+            { logs: { $slice: -7 } } // Get last 7 logs only
+            );
+        const waterHistory = history || { logs: [] };
         return {
             user,
             device,
