@@ -184,7 +184,10 @@ const isOnline = async (id) => {
 
 const WaterUsageUpdate = async (deviceId, sensorData) => {
     try {
-        const waterHistoryRecord = await waterHistory.findOne({ deviceId: deviceId });
+        const device = await Device.findOne({ nameId: deviceId });
+        if (!device) throw new Error('Device not found');
+
+        const waterHistoryRecord = await waterHistory.findOne({ deviceId: device._id });
         if (!waterHistoryRecord) {
             throw new Error('Water history record not found');
         }
