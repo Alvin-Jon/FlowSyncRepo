@@ -123,9 +123,9 @@ const addWaterLogs = async () => {
     await WaterHistory.updateMany({}, { $set: { logs: [
       {day: day, usage: 0 ,}
     ] } }); 
-    console.log('All water history logs deleted successfully.');
+    console.log('logs successfully added .');
   } catch (error) {
-    console.error('Error deleting water history logs:', error);
+    console.error('issue updating logs:', error);
   }
 };
 
