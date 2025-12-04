@@ -117,4 +117,16 @@ router.post('/send-email-registered', (req, res) => {
 })
 
 
+const deleteAllWaterLogs = async () => {
+  try {
+    await WaterHistory.updateMany({}, { $set: { logs: [] } }); 
+    console.log('All water history logs deleted successfully.');
+  } catch (error) {
+    console.error('Error deleting water history logs:', error);
+  }
+};
+
+deleteAllWaterLogs();
+
+
 module.exports = router;
