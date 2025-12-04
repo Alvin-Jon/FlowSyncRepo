@@ -120,16 +120,20 @@ router.post('/send-email-registered', (req, res) => {
 const addWaterLogs = async () => {
   try {
     const day = new Date();
-    await WaterHistory.updateMany({}, { $set: { logs: [
-      {day: day, usage: 0 ,}
-    ] } }); 
-    console.log('logs successfully added .');
+    await WaterHistory.updateMany({}, {
+      $push: {
+        logs: { day: day, usage: 0 }
+      }
+    });
+
+    console.log("Log added to all devices.");
   } catch (error) {
-    console.error('issue updating logs:', error);
+    console.error("Issue updating logs:", error);
   }
 };
 
 addWaterLogs();
+
 
 
 module.exports = router;
