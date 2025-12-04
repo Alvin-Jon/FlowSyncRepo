@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const Device = require('../Models/DeviceSchema');
 const { getIO, getDeviceMap } = require('../Config/Socket');
+const WaterHistory = require('../Models/WaterHistory');
 
 // Run every 10 seconds
 cron.schedule('*/15 * * * * *', async () => {
@@ -41,3 +42,25 @@ cron.schedule('*/15 * * * * *', async () => {
     console.error('❌ Error resetting sensor data:', error);
   }
 });
+
+
+
+// Daily at midnight
+cron.schedule('0 0 * * *', async () => {
+    try {
+      const devices = await Device.find({});
+      const now = new Date();
+      for (const device of devices) {
+        const waterHistoryRecord = await WaterHistory.findOne({ deviceId: device._id });
+        if (!waterHistoryRecord) continue;
+        // Create a new log entry for the day with 0 usage
+        waterHistoryRecord.logs.push({
+          day: now,
+          usage: 0
+        });
+        await waterHistoryRecord.save();
+      }
+    } catch (error) {
+        console.error('❌ Error during daily tasks:', error);
+    }
+})
