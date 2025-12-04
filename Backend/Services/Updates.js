@@ -195,7 +195,6 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
         // Extract flow rate number
         const flowRate = sensorData.FlowSensor[0].description.replace("L/min", "");
         const flowRateNum = parseFloat(flowRate);
-
         // Convert L/min → liters per 5 seconds
         const waterUsed = flowRateNum / 12;
 
@@ -220,9 +219,12 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
                 usage: waterUsed
             });
         }
+        
+        // let  Mongoose know the array changed!
+        waterHistoryRecord.markModified("logs");
 
         await waterHistoryRecord.save();
-
+        alertFrontend(deviceId, "update-device-details", waterHistoryRecord.logs);
     } catch (error) {
         console.error('Error updating water usage:', error);
         throw error;
