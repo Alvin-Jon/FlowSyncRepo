@@ -119,13 +119,13 @@ router.post('/send-email-registered', (req, res) => {
 
 const addWaterLogs = async () => {
   try {
-    const newWaterHistory = new WaterHistory({
-      logs: [{ day: day, usage: 0 }],
-    });
-
-    newWaterHistory.save();
+    const day = new Date();
+    await WaterHistory.updateMany({}, { $set: { logs: [
+      {day: day, usage: 0 ,}
+    ] } }); 
+    console.log('All water history logs deleted successfully.');
   } catch (error) {
-    console.error('Error adding water logs:', error);
+    console.error('Error deleting water history logs:', error);
   }
 };
 
