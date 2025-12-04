@@ -1,6 +1,6 @@
 const User = require('../Models/UserSchema');
 const Device = require('../Models/DeviceSchema');
-const waterHistory = require('../Models/WaterHistory');
+const WaterHistory = require('../Models/WaterHistory');
 const {sendEmail} = require('./AlertServices');
 const {alertFrontend} = require('./SocketEmitter');
 const {getEmailByDeviceId} = require('./State');
@@ -187,7 +187,7 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
         const device = await Device.findOne({ nameId: deviceId });
         if (!device) throw new Error('Device not found');
 
-        const waterHistoryRecord = await waterHistory.findOne({ deviceId: device._id });
+        const waterHistoryRecord = await WaterHistory.findOne({ deviceId: device._id });
         if (!waterHistoryRecord) {
             throw new Error('Water history record not found');
         }
@@ -234,4 +234,4 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
 
 
 
-module.exports = { isOnline ,settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate, esp32StatusUpdate,   esp32SensorDataUpdate };
+module.exports = { isOnline ,settingsUpdate, automationStatusUpdate, waterPumpStatusUpdate, watersupplyStatusUpdate, esp32StatusUpdate,   esp32SensorDataUpdate, WaterUsageUpdate };
