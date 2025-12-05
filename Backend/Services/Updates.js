@@ -196,7 +196,7 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
         const flowRate = sensorData.FlowSensor[0].description.replace("L/min", "");
         const flowRateNum = parseFloat(flowRate);
         // Convert L/min → liters per 5 seconds
-        const waterUsed = flowRateNum / 12;
+        const waterUsed = parseFloat((flowRateNum / 12).toFixed(1));
 
         // Get today's date (reset to midnight)
         const today = new Date();
@@ -211,12 +211,12 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
 
         if (existingLog) {
             // Increment usage
-            existingLog.usage += waterUsed.toFixed(1);
+            existingLog.usage += waterUsed;
         } else {
             // Create new log for today
             waterHistoryRecord.logs.push({
                 day: new Date(),
-                usage: waterUsed.toFixed(1),
+                usage: waterUsed,
             });
         }
         
