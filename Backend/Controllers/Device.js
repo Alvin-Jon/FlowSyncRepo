@@ -56,7 +56,7 @@ cron.schedule('0 0 * * *', async () => {
         // Create a new log entry for the day with 0 usage
         waterHistoryRecord.logs.push({
           day: now,
-          usage: 0
+          usage: 0,
         });
         await waterHistoryRecord.save();
       }
