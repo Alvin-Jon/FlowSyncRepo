@@ -8,6 +8,6 @@ const WaterHistorySchema = new Schema({
     required: true,
   },
   logs: { type: Array, default: [] },
-}, { timestamps: true });
+}, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('WaterHistory', WaterHistorySchema);

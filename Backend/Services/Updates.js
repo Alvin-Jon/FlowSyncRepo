@@ -216,7 +216,7 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
             // Create new log for today
             waterHistoryRecord.logs.push({
                 day: new Date(),
-                usage: waterUsed
+                usage: waterUsed.toFixed(2),
             });
         }
         
