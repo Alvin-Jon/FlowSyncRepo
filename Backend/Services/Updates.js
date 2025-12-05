@@ -211,12 +211,12 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
 
         if (existingLog) {
             // Increment usage
-            existingLog.usage += waterUsed;
+            existingLog.usage += waterUsed.toFixed(1);
         } else {
             // Create new log for today
             waterHistoryRecord.logs.push({
                 day: new Date(),
-                usage: waterUsed.toFixed(2),
+                usage: waterUsed.toFixed(1),
             });
         }
         
