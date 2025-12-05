@@ -211,7 +211,8 @@ const WaterUsageUpdate = async (deviceId, sensorData) => {
 
         if (existingLog) {
             // Increment usage
-            existingLog.usage += waterUsed;
+            existingLog.usage = parseFloat(existingLog.usage) + waterUsed;
+
         } else {
             // Create new log for today
             waterHistoryRecord.logs.push({
