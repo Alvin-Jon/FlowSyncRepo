@@ -45,6 +45,7 @@ cron.schedule('*/15 * * * * *', async () => {
 
 
 
+
 // Daily at midnight
 cron.schedule('0 0 * * *', async () => {
     try {
