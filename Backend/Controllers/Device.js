@@ -66,26 +66,3 @@ cron.schedule('0 0 * * *', async () => {
     }
 })
 
-
-const newLog = async () => {
-  try {
-      const devices = await Device.find({});
-      const now = new Date();
-      for (const device of devices) {
-        const waterHistoryRecord = await WaterHistory.findOne({ deviceId: device._id });
-        if (!waterHistoryRecord) continue;
-        // Create a new log entry for the day with 0 usage
-        waterHistoryRecord.logs.push({
-          day: now,
-          usage: 0,
-        });
-        await waterHistoryRecord.save();
-      }
-    } catch (error) {
-        console.error('❌ Error during daily tasks:', error);
-    }
-};
-
-
-newLog();
-module.exports = { newLog, };
